@@ -1,4 +1,10 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { ENDPOINTS } from "./api/handlers";
 import "./App.css";
 import { useFetchSWR, useFetchSWRMutation } from "./swr";
@@ -35,6 +41,14 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <h1>{location.pathname}</h1>
+      <ul>
+        <li>
+          <Link to="/">fetch</Link>
+        </li>
+        <li>
+          <Link to="/mutation">ByUseFetchSWR</Link>
+        </li>
+      </ul>
       {children}
     </div>
   );
