@@ -1,13 +1,16 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ENDPOINTS } from "./api/handlers";
 import "./App.css";
 import { useFetchSWR, useFetchSWRMutation } from "./swr";
 
 function App() {
   return (
-    <div>
-      <ByUseFetchSWR />
-      <ByUseEffectWithMutation />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ByUseFetchSWR />} />
+        <Route path="/mutation" element={<ByUseEffectWithMutation />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
