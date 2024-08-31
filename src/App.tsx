@@ -1,21 +1,28 @@
-
-import { ENDPOINTS } from './api/handlers'
-import './App.css'
-import { useFetchSWR } from './swr'
+import { ENDPOINTS } from "./api/handlers";
+import "./App.css";
+import { useFetchSWR, useFetchSWRMutation } from "./swr";
 
 function App() {
   return (
     <div>
-      <ByUseEffectWithMutation/>
+      <ByUseFetchSWR />
+      <ByUseEffectWithMutation />
     </div>
-  )
+  );
 }
+
+const ByUseFetchSWR = () => {
+  const { data } = useFetchSWR(ENDPOINTS.USER);
+  console.log(data);
+
+  return <div>ByUseFetchSWR</div>;
+};
 
 const ByUseEffectWithMutation = () => {
-  const {data} = useFetchSWR(ENDPOINTS.USER)
-  console.log(data)
+  const { data } = useFetchSWRMutation(ENDPOINTS.USER);
+  console.log(data);
 
-  return <div>ByUseEffectWithMutation</div>
-}
+  return <div>ByUseEffectWithMutation</div>;
+};
 
-export default App
+export default App;
