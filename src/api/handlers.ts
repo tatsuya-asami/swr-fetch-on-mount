@@ -3,6 +3,7 @@ import { http, HttpResponse, delay } from "msw";
 export const ENDPOINTS = {
   USERS: "https://example.com/users",
   POSTS: "https://example.com/posts",
+  LINKS: "https://example.com/links",
 } as const;
 
 export const handlers = [
@@ -20,6 +21,10 @@ export const handlers = [
     return HttpResponse.json(
       POSTS.filter((post) => post.userId === parseInt(userId))
     );
+  }),
+  http.get(ENDPOINTS.LINKS, async () => {
+    await delay(1000);
+    return HttpResponse.json(LINKS);
   }),
 ];
 
@@ -65,3 +70,21 @@ const POSTS = [
   },
   { id: 4, userId: 3, body: "userId 3 unknown" },
 ] as const satisfies Post[];
+
+export type Link = {
+  id: number;
+  postId: number;
+  url: string;
+};
+const LINKS = [
+  {
+    id: 1,
+    postId: 1,
+    url: "https://example.com/posts/1",
+  },
+  {
+    id: 2,
+    postId: 2,
+    url: "https://example.com/posts/2",
+  },
+] as const satisfies Link[];

@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, Key, SWRResponse } from "swr";
 import useSWRMutation from "swr/mutation";
-import { ENDPOINTS, Post, User } from "./api/handlers";
+import { ENDPOINTS, Link, Post, User } from "./api/handlers";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -20,6 +20,9 @@ export const useFetchPosts = (
 ) => {
   const query = userId ? `?userId=${userId}` : "";
   return useFetchSWR<User[]>(users ? `${ENDPOINTS.POSTS}${query}` : null);
+};
+export const useFetchLinks = () => {
+  return useFetchSWR<Link[]>(ENDPOINTS.LINKS);
 };
 
 export const useFetchPostsByMutation = () => {
