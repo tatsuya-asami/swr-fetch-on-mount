@@ -10,7 +10,7 @@ export type User = {
   id: number;
   firstName: string;
   lastName: string;
-  postIds: number[];
+  postId: number;
 };
 
 export type Post = {

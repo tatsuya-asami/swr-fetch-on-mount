@@ -7,7 +7,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import "./App.css";
-import { useFetchPosts, useFetchPostsByMutation, useFetchUsers } from "./swr";
+import { useFetchPost, useFetchPostByMutation, useFetchUsers } from "./swr";
 import { useEffect } from "react";
 
 function App() {
@@ -23,15 +23,15 @@ function App() {
 
 const ByUseFetchSWR = () => {
   const { userId, setUserId, clearUserId } = useUserIdParams();
-  const { data: user } = useFetchUsers(userId);
-  const { data: postListOnMount } = useFetchPosts(user?.list?.postIds, {
-    revalidateOnMount: false,
+  const {
+    data: { user },
+  } = useFetchUsers(userId);
+  const { data: postOnMount } = useFetchPost(user?.postId, {
+    revalidateOnMount: true,
     revalidateOnFocus: false,
     revalidateIfStale: false,
   });
-  const { data: postListByMutation, trigger } = useFetchPostsByMutation();
-
-  const postIds = user?.list?.postIds ?? [];
+  const { data: postByMutation, trigger } = useFetchPostByMutation();
 
   return (
     <Wrapper
@@ -39,20 +39,21 @@ const ByUseFetchSWR = () => {
       setUserId={setUserId}
       clearUserId={clearUserId}
       trigger={trigger}
-      postIds={postIds}
-      postList={postListByMutation || postListOnMount}
+      postId={user?.postId}
+      post={postByMutation || postOnMount}
     />
   );
 };
 
 const ByUseEffectWithMutation = () => {
   const { userId, setUserId, clearUserId } = useUserIdParams();
-  const { data: user } = useFetchUsers(userId);
-  const { data: postList, trigger } = useFetchPostsByMutation();
-  const postIds = user?.list?.postIds ?? [];
+  const {
+    data: { user },
+  } = useFetchUsers(userId);
+  const { data: postList, trigger } = useFetchPostByMutation();
 
   useEffect(() => {
-    trigger({ postIds });
+    trigger({ postId: user?.postId });
   }, []);
 
   return (
@@ -61,8 +62,8 @@ const ByUseEffectWithMutation = () => {
       setUserId={setUserId}
       clearUserId={clearUserId}
       trigger={trigger}
-      postIds={postIds}
-      postList={postList}
+      postId={user?.postId}
+      post={postList}
     />
   );
 };
@@ -72,15 +73,15 @@ const Wrapper = ({
   setUserId,
   trigger,
   clearUserId,
-  postIds,
-  postList,
+  postId,
+  post,
 }: {
   userId: number;
   setUserId: (userId: number) => void;
-  trigger: (arg: { postIds: number[] }) => void;
+  trigger: (arg: { postId: number | undefined }) => void;
   clearUserId: () => void;
-  postIds: number[];
-  postList: { id: number; body: string }[] | undefined;
+  postId: number | undefined;
+  post: { id: number; body: string } | undefined;
 }) => {
   const location = useLocation();
   return (
@@ -100,18 +101,16 @@ const Wrapper = ({
           value={userId}
           onChange={(event) => setUserId(parseInt(event.target.value))}
         />
-        <button onClick={() => trigger({ postIds })}>search</button>
+        <button onClick={() => trigger({ postId })}>search</button>
         <button onClick={() => clearUserId()}>clear</button>
       </div>
       <div>
-        {postList?.length
-          ? postList.map((post) => (
-              <ul key={post.id}>
-                <li>{post.id}</li>
-                <li>{post.body}</li>
-              </ul>
-            ))
-          : "no data"}
+        {post ? (
+          <ul key={post.id}>
+            <li>{post.id}</li>
+            <li>{post.body}</li>
+          </ul>
+        ) : null}
       </div>
     </div>
   );

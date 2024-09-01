@@ -2,15 +2,15 @@
   "users": [
     {
       "id": 1,
-      "body": "userId 2 John"
+      "firstName": "Susumu",
+      "lastName": "Kurose",
+      "postId": 2
     },
     {
       "id": 2,
-      "body": "userId 1 Susumu"
-    },
-    {
-      "id": 3,
-      "body": "userId 2 John2"
+      "firstName": "John",
+      "lastName": "Maverick",
+      "postId": 1
     }
   ],
   "posts": [
@@ -21,10 +21,6 @@
     {
       "id": 2,
       "body": "userId 1 Susumu"
-    },
-    {
-      "id": 3,
-      "body": "userId 2 John2"
     }
   ]
 }
