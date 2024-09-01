@@ -15,10 +15,15 @@ export const useFetchUsers = (userId: number | undefined) => {
   const query = userId
     ? new URLSearchParams({ userId: userId.toString() })
     : undefined;
-
-  return useFetchSWR<User>(
+  const response = useFetchSWR<User>(
     query ? `${ENDPOINTS.USERS}?${query}` : ENDPOINTS.USERS
   );
+  return {
+    ...response,
+    data: {
+      list: response.data,
+    },
+  };
 };
 export const useFetchPosts = (
   users: User | undefined,

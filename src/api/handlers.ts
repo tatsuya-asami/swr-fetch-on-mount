@@ -10,7 +10,7 @@ export const handlers = [
   http.get(ENDPOINTS.USERS, async ({ request }) => {
     const url = new URL(request.url);
     const userId = url.searchParams.get("userId");
-    await delay(1000);
+    await delay(100);
     return HttpResponse.json(
       USERS.find((user) => user.id === parseInt(userId ?? ""))
     );
@@ -18,7 +18,7 @@ export const handlers = [
   http.get(ENDPOINTS.POSTS, async ({ request }) => {
     const url = new URL(request.url);
     const postIds = url.searchParams.getAll("postIds");
-    await delay(1000);
+    await delay(100);
 
     return HttpResponse.json(
       POSTS.filter((post) =>

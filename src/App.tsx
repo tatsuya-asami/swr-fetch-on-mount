@@ -31,14 +31,16 @@ const ByUseFetchSWR = () => {
 
 const ByUseEffectWithMutation = () => {
   const { userId, setUserId, clearUserId } = useUserIdParams();
-  const { data: user } = useFetchUsers(userId);
+  const { data: user, isLoading } = useFetchUsers(userId);
   const { data: postList, trigger } = useFetchPostsByMutation();
-
-  const postIds = user?.postIds ?? [];
+  const postIds = user?.list?.postIds ?? [];
 
   useEffect(() => {
+    if (!postIds.length) {
+      return;
+    }
     trigger({ postIds: postIds });
-  }, []);
+  }, [trigger, isLoading]);
 
   return (
     <Wrapper>
