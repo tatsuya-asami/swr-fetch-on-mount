@@ -83,16 +83,17 @@ const Wrapper = ({
   postId: number | undefined;
   post: { id: number; body: string } | undefined;
 }) => {
-  const location = useLocation();
+  const { pathname, search } = useLocation();
+
   return (
     <div>
-      <h1>{location.pathname}</h1>
+      <h1>{pathname}</h1>
       <ul>
         <li>
-          <Link to="/">fetch</Link>
+          <Link to={`/${search}`}>fetch</Link>
         </li>
         <li>
-          <Link to="/mutation">ByUseFetchSWR</Link>
+          <Link to={`/mutation${search}`}>ByUseFetchSWR</Link>
         </li>
       </ul>
       <div>
