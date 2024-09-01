@@ -12,7 +12,7 @@ const useFetchSWR = <Data, Error = any, SWRKey extends Key = Key>(
 };
 
 export const useFetchUsers = () => {
-  return useFetchSWR<User[]>(ENDPOINTS.USER);
+  return useFetchSWR<User[]>(ENDPOINTS.USERS);
 };
 export const useFetchPosts = (
   users: User[] | undefined,

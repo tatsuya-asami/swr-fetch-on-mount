@@ -1,12 +1,12 @@
 import { http, HttpResponse, delay } from "msw";
 
 export const ENDPOINTS = {
-  USER: "https://example.com/user",
-  POSTS: "https://example.com/users",
+  USERS: "https://example.com/users",
+  POSTS: "https://example.com/posts",
 } as const;
 
 export const handlers = [
-  http.get(ENDPOINTS.USER, async () => {
+  http.get(ENDPOINTS.USERS, async () => {
     await delay(1000);
     return HttpResponse.json(USERS);
   }),
