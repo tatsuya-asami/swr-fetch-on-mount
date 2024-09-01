@@ -31,22 +31,20 @@ const ByUseFetchSWR = () => {
 
 const ByUseEffectWithMutation = () => {
   const { userId, setUserId, clearUserId } = useUserIdParams();
-  const { data: user, isLoading } = useFetchUsers(userId);
+  const { data: user } = useFetchUsers(userId);
   const { data: postList, trigger } = useFetchPostsByMutation();
   const postIds = user?.list?.postIds ?? [];
 
   useEffect(() => {
-    if (!postIds.length) {
-      return;
-    }
-    trigger({ postIds: postIds });
-  }, [trigger, isLoading]);
+    trigger({ postIds });
+  }, []);
 
   return (
     <Wrapper>
       <div>
         <input
           type="number"
+          value={userId}
           onChange={(event) => setUserId(parseInt(event.target.value))}
         />
         <button onClick={() => trigger({ postIds })}>search</button>
