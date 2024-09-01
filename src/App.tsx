@@ -50,7 +50,7 @@ const ByUseEffectWithMutation = () => {
   const {
     data: { user },
   } = useFetchUsers(userId);
-  const { data: postList, trigger } = useFetchPostByMutation();
+  const { data: post, trigger } = useFetchPostByMutation();
 
   useEffect(() => {
     trigger({ postId: user?.postId });
@@ -63,7 +63,7 @@ const ByUseEffectWithMutation = () => {
       clearUserId={clearUserId}
       trigger={trigger}
       postId={user?.postId}
-      post={postList}
+      post={post}
     />
   );
 };
