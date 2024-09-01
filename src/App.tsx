@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { useFetchPosts, useFetchPostsByMutation, useFetchUsers } from "./swr";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 function App() {
   return (
@@ -30,10 +30,16 @@ const ByUseFetchSWR = () => {
 };
 
 const ByUseEffectWithMutation = () => {
-  const { userId, setUserId } = useUserIdParams();
-  const { data: userList } = useFetchUsers();
+  const { userId, setUserId, clearUserId } = useUserIdParams();
+  const { data: user } = useFetchUsers(userId);
   const { data: postList, trigger } = useFetchPostsByMutation();
-  console.log(userList, postList);
+
+  const postIds = user?.postIds ?? [];
+
+  useEffect(() => {
+    trigger({ postIds: postIds });
+  }, []);
+
   return (
     <Wrapper>
       <div>
@@ -41,19 +47,18 @@ const ByUseEffectWithMutation = () => {
           type="number"
           onChange={(event) => setUserId(parseInt(event.target.value))}
         />
-        <button onClick={() => trigger({ userId })}>search</button>
+        <button onClick={() => trigger({ postIds })}>search</button>
+        <button onClick={() => clearUserId()}>clear</button>
       </div>
       <div>
-        {postList?.map((post) => (
-          <ul key={post.id}>
-            <li>{post.id}</li>
-            <li>
-              {userList?.find((user) => user.id === post.userId)?.firstName ??
-                "不明なユーザー"}
-            </li>
-            <li>{post.body}</li>
-          </ul>
-        )) ?? "no data"}
+        {postList?.length
+          ? postList.map((post) => (
+              <ul key={post.id}>
+                <li>{post.id}</li>
+                <li>{post.body}</li>
+              </ul>
+            ))
+          : "no data"}
       </div>
     </Wrapper>
   );
@@ -84,7 +89,10 @@ const useUserIdParams = () => {
   const setUserId = (userId: number) => {
     setSearchParams({ userId: userId.toString() });
   };
-  return { userId, setUserId };
+  const clearUserId = () => {
+    setSearchParams();
+  };
+  return { userId, setUserId, clearUserId };
 };
 
 export default App;

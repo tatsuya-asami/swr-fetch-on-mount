@@ -11,27 +11,33 @@ const useFetchSWR = <Data, Error = any, SWRKey extends Key = Key>(
   return useSWR(key, fetcher, config);
 };
 
-export const useFetchUsers = () => {
-  return useFetchSWR<User[]>(ENDPOINTS.USERS);
+export const useFetchUsers = (userId: number | undefined) => {
+  const query = userId
+    ? new URLSearchParams({ userId: userId.toString() })
+    : undefined;
+
+  return useFetchSWR<User>(
+    query ? `${ENDPOINTS.USERS}?${query}` : ENDPOINTS.USERS
+  );
 };
 export const useFetchPosts = (
-  users: User[] | undefined,
+  users: User | undefined,
   userId: number | undefined
 ) => {
   const query = userId ? `?userId=${userId}` : "";
-  return useFetchSWR<User[]>(users ? `${ENDPOINTS.POSTS}${query}` : null);
+  return useFetchSWR<Post[]>(users ? `${ENDPOINTS.POSTS}${query}` : null);
 };
 export const useFetchLinks = () => {
   return useFetchSWR<Link[]>(ENDPOINTS.LINKS);
 };
 
 export const useFetchPostsByMutation = () => {
-  type Query = { userId: number };
+  type Query = { postIds: number[] };
   const getPosts = async (path: string, { arg }: { arg: Query }) => {
-    const query = arg.userId
-      ? new URLSearchParams({ userId: arg.userId.toString() })
+    const query = arg.postIds
+      ? new URLSearchParams({ postIds: arg.postIds.toString() })
       : undefined;
-    return fetch(arg.userId ? `${path}?${query}` : path).then((r) => r.json());
+    return fetch(arg.postIds ? `${path}?${query}` : path).then((r) => r.json());
   };
 
   return useSWRMutation<Post[], any, string, Query>(ENDPOINTS.POSTS, getPosts);

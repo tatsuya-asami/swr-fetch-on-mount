@@ -7,19 +7,23 @@ export const ENDPOINTS = {
 } as const;
 
 export const handlers = [
-  http.get(ENDPOINTS.USERS, async () => {
-    await delay(1000);
-    return HttpResponse.json(USERS);
-  }),
-  http.get(ENDPOINTS.POSTS, async ({ request }) => {
+  http.get(ENDPOINTS.USERS, async ({ request }) => {
     const url = new URL(request.url);
     const userId = url.searchParams.get("userId");
     await delay(1000);
-    if (!userId) {
-      return HttpResponse.json(POSTS);
-    }
     return HttpResponse.json(
-      POSTS.filter((post) => post.userId === parseInt(userId))
+      USERS.find((user) => user.id === parseInt(userId ?? ""))
+    );
+  }),
+  http.get(ENDPOINTS.POSTS, async ({ request }) => {
+    const url = new URL(request.url);
+    const postIds = url.searchParams.getAll("postIds");
+    await delay(1000);
+
+    return HttpResponse.json(
+      POSTS.filter((post) =>
+        postIds.map((post) => parseInt(post)).includes(post.id)
+      )
     );
   }),
   http.get(ENDPOINTS.LINKS, async () => {
@@ -32,6 +36,7 @@ export type User = {
   id: number;
   firstName: string;
   lastName: string;
+  postIds: number[];
 };
 
 export const USERS = [
@@ -39,36 +44,33 @@ export const USERS = [
     id: 1,
     firstName: "Susumu",
     lastName: "Kurose",
+    postIds: [2],
   },
   {
     id: 2,
     firstName: "John",
     lastName: "Maverick",
+    postIds: [1, 3],
   },
 ] as const satisfies User[];
 
 export type Post = {
   id: number;
-  userId: number;
   body: string;
 };
 const POSTS = [
   {
     id: 1,
-    userId: 2,
     body: "userId 2 John",
   },
   {
     id: 2,
-    userId: 1,
     body: "userId 1 Susumu",
   },
   {
     id: 3,
-    userId: 2,
     body: "userId 2 John2",
   },
-  { id: 4, userId: 3, body: "userId 3 unknown" },
 ] as const satisfies Post[];
 
 export type Link = {
