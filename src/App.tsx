@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { useFetchPosts, useFetchPostsByMutation, useFetchUsers } from "./swr";
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 function App() {
   return (
@@ -22,11 +22,27 @@ function App() {
 }
 
 const ByUseFetchSWR = () => {
-  const { data } = useFetchUsers();
-  const { data: post } = useFetchPosts(data, undefined);
-  console.log(data, post);
+  const { userId, setUserId, clearUserId } = useUserIdParams();
+  const { data: user } = useFetchUsers(userId);
+  const { data: postListOnMount } = useFetchPosts(user?.list?.postIds, {
+    revalidateOnMount: false,
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
+  const { data: postListByMutation, trigger } = useFetchPostsByMutation();
 
-  return <Wrapper>ByUseFetchSWR</Wrapper>;
+  const postIds = user?.list?.postIds ?? [];
+
+  return (
+    <Wrapper
+      userId={userId}
+      setUserId={setUserId}
+      clearUserId={clearUserId}
+      trigger={trigger}
+      postIds={postIds}
+      postList={postListByMutation || postListOnMount}
+    />
+  );
 };
 
 const ByUseEffectWithMutation = () => {
@@ -40,7 +56,44 @@ const ByUseEffectWithMutation = () => {
   }, []);
 
   return (
-    <Wrapper>
+    <Wrapper
+      userId={userId}
+      setUserId={setUserId}
+      clearUserId={clearUserId}
+      trigger={trigger}
+      postIds={postIds}
+      postList={postList}
+    />
+  );
+};
+
+const Wrapper = ({
+  userId,
+  setUserId,
+  trigger,
+  clearUserId,
+  postIds,
+  postList,
+}: {
+  userId: number;
+  setUserId: (userId: number) => void;
+  trigger: (arg: { postIds: number[] }) => void;
+  clearUserId: () => void;
+  postIds: number[];
+  postList: { id: number; body: string }[] | undefined;
+}) => {
+  const location = useLocation();
+  return (
+    <div>
+      <h1>{location.pathname}</h1>
+      <ul>
+        <li>
+          <Link to="/">fetch</Link>
+        </li>
+        <li>
+          <Link to="/mutation">ByUseFetchSWR</Link>
+        </li>
+      </ul>
       <div>
         <input
           type="number"
@@ -60,25 +113,6 @@ const ByUseEffectWithMutation = () => {
             ))
           : "no data"}
       </div>
-    </Wrapper>
-  );
-};
-
-const Wrapper = ({ children }: { children: ReactNode }) => {
-  const location = useLocation();
-
-  return (
-    <div>
-      <h1>{location.pathname}</h1>
-      <ul>
-        <li>
-          <Link to="/">fetch</Link>
-        </li>
-        <li>
-          <Link to="/mutation">ByUseFetchSWR</Link>
-        </li>
-      </ul>
-      {children}
     </div>
   );
 };

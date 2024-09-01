@@ -26,11 +26,16 @@ export const useFetchUsers = (userId: number | undefined) => {
   };
 };
 export const useFetchPosts = (
-  users: User | undefined,
-  userId: number | undefined
+  postIds: number[] | undefined,
+  config?: SWRConfiguration
 ) => {
-  const query = userId ? `?userId=${userId}` : "";
-  return useFetchSWR<Post[]>(users ? `${ENDPOINTS.POSTS}${query}` : null);
+  const query = postIds
+    ? new URLSearchParams({ postIds: postIds.toString() })
+    : undefined;
+  return useFetchSWR<Post[]>(
+    postIds ? `${ENDPOINTS.POSTS}?${query}` : null,
+    config
+  );
 };
 export const useFetchLinks = () => {
   return useFetchSWR<Link[]>(ENDPOINTS.LINKS);

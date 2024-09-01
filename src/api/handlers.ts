@@ -22,7 +22,7 @@ export const handlers = [
 
     return HttpResponse.json(
       POSTS.filter((post) =>
-        postIds.map((post) => parseInt(post)).includes(post.id)
+        postIds.map((postId) => parseInt(postId)).includes(post.id)
       )
     );
   }),
