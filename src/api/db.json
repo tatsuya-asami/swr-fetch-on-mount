@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "body": "userId 2 John"
+    },
+    {
+      "id": 2,
+      "body": "userId 1 Susumu"
+    },
+    {
+      "id": 3,
+      "body": "userId 2 John2"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "body": "userId 2 John"
+    },
+    {
+      "id": 2,
+      "body": "userId 1 Susumu"
+    },
+    {
+      "id": 3,
+      "body": "userId 2 John2"
+    }
+  ]
+}
