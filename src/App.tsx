@@ -4,10 +4,10 @@ import {
   Route,
   Routes,
   useLocation,
+  useSearchParams,
 } from "react-router-dom";
-import { ENDPOINTS } from "./api/handlers";
 import "./App.css";
-import { useFetchSWR, useFetchSWRMutation } from "./swr";
+import { useFetchPosts, useFetchPostsByMutation, useFetchUsers } from "./swr";
 import { ReactNode } from "react";
 
 function App() {
@@ -22,17 +22,41 @@ function App() {
 }
 
 const ByUseFetchSWR = () => {
-  const { data } = useFetchSWR(ENDPOINTS.USER);
-  console.log(data);
+  const { data } = useFetchUsers();
+  const { data: post } = useFetchPosts(data, undefined);
+  console.log(data, post);
 
   return <Wrapper>ByUseFetchSWR</Wrapper>;
 };
 
 const ByUseEffectWithMutation = () => {
-  const { data } = useFetchSWRMutation(ENDPOINTS.USER);
-  console.log(data);
-
-  return <Wrapper>ByUseEffectWithMutation</Wrapper>;
+  const { userId, setUserId } = useUserIdParams();
+  const { data: userList } = useFetchUsers();
+  const { data: postList, trigger } = useFetchPostsByMutation();
+  console.log(userList, postList);
+  return (
+    <Wrapper>
+      <div>
+        <input
+          type="number"
+          onChange={(event) => setUserId(parseInt(event.target.value))}
+        />
+        <button onClick={() => trigger({ userId })}>search</button>
+      </div>
+      <div>
+        {postList?.map((post) => (
+          <ul key={post.id}>
+            <li>{post.id}</li>
+            <li>
+              {userList?.find((user) => user.id === post.userId)?.firstName ??
+                "不明なユーザー"}
+            </li>
+            <li>{post.body}</li>
+          </ul>
+        )) ?? "no data"}
+      </div>
+    </Wrapper>
+  );
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
@@ -52,6 +76,15 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       {children}
     </div>
   );
+};
+
+const useUserIdParams = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const userId = parseInt(searchParams.get("userId") || "0");
+  const setUserId = (userId: number) => {
+    setSearchParams({ userId: userId.toString() });
+  };
+  return { userId, setUserId };
 };
 
 export default App;
