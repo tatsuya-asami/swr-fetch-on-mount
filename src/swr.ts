@@ -36,6 +36,9 @@ export const useFetchPostByMutation = () => {
   type Query = { postId: number | undefined };
   const getPosts = async (path: string, { arg }: { arg: Query }) => {
     const { postId } = arg;
+    if (!postId) {
+      return;
+    }
     return fetch(postId ? `${path}/${postId}` : path).then((r) => r.json());
   };
 
